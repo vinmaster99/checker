@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+require_relative "../lib/checker"
+
+sites = Adaptive::Checker.get_sites[1..10]
+result = Hash.new
+
+sites.each do |site|
+  #puts site
+  result[site] = Adaptive::Checker.is_site_up?(site)
+end
+
+Adaptive::Checker.generate_report(result)

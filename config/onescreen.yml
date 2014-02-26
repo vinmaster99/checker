@@ -1,0 +1,20 @@
+production:
+  onescreen:
+    api:
+      root: http://apip.onescreen.net
+      version: v2
+development:
+  onescreen:
+    api:
+      root: http://api.dev.onescreen.net
+      version: v2
+local:
+  onescreen:
+    api:
+      root: http://localhost:9393
+      version: 
+test:
+  onescreen:
+    api:
+      root: http://localhost:9393
+      version: 
