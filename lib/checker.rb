@@ -2,6 +2,7 @@ require 'onescreen-internal'
 require 'nokogiri'
 require 'yaml'
 require 'faraday'
+require 'json'
 
 require_relative "checker/initializers/api"
 
@@ -46,17 +47,17 @@ module Adaptive
       
       begin
         #response = Faraday.get(site)
-        puts site
+        #puts site
         connection = Faraday.new
         connection.options.timeout = @timeout
         connection.options.open_timeout = @timeout
 
         response = connection.get site
         #puts response.status
-        puts response.status
+        #puts response.status
         is_site_up = response.status == 200
       rescue Exception => e
-        puts e
+        #puts e
         is_site_up = false
       end
 =begin
@@ -82,6 +83,10 @@ module Adaptive
         end
       end
       puts "Up = #{up}\nDown = #{down}"
+    end
+
+    def generate_json(result)
+      puts result.to_json
     end
 
   end

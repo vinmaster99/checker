@@ -1,12 +1,28 @@
 #!/usr/bin/env ruby
+require "pstore"
 require_relative "../lib/checker"
 
 sites = Adaptive::Checker.get_sites[1..10]
-result = Hash.new
 
+result = Hash.new
 sites.each do |site|
   #puts site
   result[site] = Adaptive::Checker.is_site_up?(site)
 end
 
+timestamp = Time.now.to_i
+
+data_store = PStore.new("data.pstore")
+data_store.transaction do
+  data_store[timestamp] = result
+end
+
+timestamp_store = PStore.new("timestamp.pstore")
+array = timestamp_store.transaction { timestamp_store.fetch(:times, Array.new) }
+array << timestamp
+timestamp_store.transaction do
+  timestamp_store[:times] = array
+end
+
 Adaptive::Checker.generate_report(result)
+#Adaptive::Checker.generate_json(result)

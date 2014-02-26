@@ -1,0 +1,7 @@
+<% if @options[:status] && @options[:status] == "Up" %>
+  <% @result = @result.sort { |a, b| a[1].to_i <=> b[1].to_i }.reverse %>
+<% elsif @options[:status] && @options[:status] == "Down" %>
+  <% @result = @result.sort { |a, b| a[1].to_i <=> b[1].to_i } %>
+<% end %>
+
+partial(:table_layout)

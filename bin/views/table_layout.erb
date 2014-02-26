@@ -1,0 +1,27 @@
+<head>
+  <link rel="stylesheet" type="text/css" href="table.css">
+</head>
+
+Last checked on: <%= @timestamp %>
+
+<div class="datagrid">
+  <table>
+    <thead>
+      <tr>
+        <th>Site url</th>
+        <th>Status</th>
+        <th>Link</th>
+      <tr>
+    </thead>
+    <tbody>
+      <% @result.each_with_index do |value, i| %>
+        <tr class="<%= (i % 2 == 0)? "alt" : "" %>">
+          <% site, status = value[0], value[1] %>
+          <td><%= site %></td>
+          <td><%= (status == true)? "Up" : "Down" %></td>
+          <td><a href="<%= site %>" target="_blank">Link</a></td>
+        </tr>
+      <% end %> 
+    </tbody>
+  </table>
+</div>

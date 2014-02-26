@@ -7,6 +7,7 @@ gem 'nokogiri'
 gem 'faraday'
 gem 'typhoeus'
 gem 'excon'
+gem 'sinatra'
 
 group :development do
   gem 'rake'
