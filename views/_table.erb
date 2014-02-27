@@ -13,7 +13,13 @@
         <tr class="<%= (i % 2 == 0)? "alt" : "" %>">
           <% site, status = value[0], value[1] %>
           <td><%= site %></td>
-          <td><%= (status == true)? "Up" : "Down" %></td>
+          <td>
+            <% if status == true %>
+              <img src="ok.png">
+            <% else %>
+              <img src="error.png">
+            <% end %>
+          </td>
           <td><a href="<%= site %>" target="_blank">Link</a></td>
         </tr>
       <% end %> 
