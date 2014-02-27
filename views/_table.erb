@@ -10,8 +10,8 @@
     </thead>
     <tbody>
       <% @result.each_with_index do |value, i| %>
-        <tr class="<%= (i % 2 == 0)? "alt" : "" %>">
-          <% site, status = value[0], value[1] %>
+        <tr class="domain <%= (i % 2 == 0)? "alt" : "" %>">
+          <% site, status, labels = value['domain'], value['status'], value['labels'] %>
           <td><%= site %></td>
           <td>
             <% if status == true %>
@@ -22,6 +22,20 @@
           </td>
           <td><a href="<%= site %>" target="_blank">Link</a></td>
         </tr>
+        <% labels.each do |label_hash| %>
+          <% label, l_status = label_hash['label'], label_hash['status'] %>
+          <tr class="subdomain" style="display: none; background-color: lightgray;">
+            <td style="padding-left: 5em;"><%= label %></td>
+            <td>
+              <% if l_status == true %>
+                <img src="/ok.png">
+              <% else %>
+                <img src="/error.png">
+              <% end %>
+            </td>
+            <td><a href="<%= site+label %>" target="_blank">Link</a></td>
+          </tr>
+        <% end %>
       <% end %> 
     </tbody>
   </table>

@@ -1,5 +1,8 @@
 <head>
   <% @@css_array.each do |css_file| %>
-    <link rel="stylesheet" type="text/css" href="/<%= css_file %>">
+    <link rel="stylesheet" type="text/css" href="<%= css_file %>">
+  <% end %>
+  <% @@js_array.each do |js_file| %>
+    <script src="<%= js_file %>"></script>
   <% end %>
 </head>

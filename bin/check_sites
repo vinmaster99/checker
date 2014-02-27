@@ -2,13 +2,9 @@
 require "pstore"
 require_relative "../lib/checker"
 
-sites = Adaptive::Checker.get_sites
+sites = Adaptive::Checker::Sites.get_sites( { :limit => 5, :include_widgets => true } )
 
-result = Hash.new
-sites.each do |site|
-  #puts site
-  result[site] = Adaptive::Checker.is_site_up?(site)
-end
+result = Adaptive::Checker::Sites.check_sites( sites )
 
 timestamp = Time.now.to_i
 
@@ -25,4 +21,4 @@ timestamp_store.transaction do
 end
 
 Adaptive::Checker.generate_report(result)
-#Adaptive::Checker.generate_json(result)
+Adaptive::Checker.generate_json(result)

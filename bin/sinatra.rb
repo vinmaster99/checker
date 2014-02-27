@@ -6,7 +6,8 @@ class TrueClass; def to_i; 1; end; end;
 class FalseClass; def to_i; 0; end; end;
 
 configure do
-  @@css_array = ['table.css']
+  @@css_array = ['/table.css']
+  @@js_array = ['http://code.jquery.com/jquery.min.js', '/script.js']
   mime_type :json, 'application/json'
   set :root, File.join(File.dirname(__FILE__), '..')
   set :views, settings.root+'/views'
