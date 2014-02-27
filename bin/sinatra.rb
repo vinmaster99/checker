@@ -7,10 +7,12 @@ class FalseClass; def to_i; 0; end; end;
 
 configure do
   @@css_array = ['table.css']
+  set :views, root+'/views'
 end
 
 helpers do
   def partial (template, locals = {})
+    template = ('_'+template.to_s).to_sym     # rails partial convension
     erb(template, :layout => false, :locals => locals)
   end
 end
