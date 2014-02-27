@@ -7,7 +7,7 @@ class FalseClass; def to_i; 0; end; end;
 
 configure do
   @@css_array = ['table.css']
-  set :views, root+'/views'
+  set :views, './views'
 end
 
 helpers do
