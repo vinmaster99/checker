@@ -23,15 +23,16 @@ module Adaptive
       end
     end
 
-    def get_sites
-      # get list of WebApp objects from OneScreen internal gem
-      sites_obj = OneScreen::Internal::WebApp.all( :limit => 300 )
+    def get_sites( options = { :limit => 300, :include_widgets => true} )
+      # get list of WebApp objects with widgets from OneScreen internal gem
+      sites_obj = OneScreen::Internal::WebApp.all( options )
       setup_url(sites_obj)
     end
 
     def setup_url(sites_obj)
       # url from get_sites does not include protocal for valid request
       sites_obj.map do |obj|
+        # obj is WebApp object
         domain = obj.domain
         unless domain.include? "http"
           domain = "http://"+domain
