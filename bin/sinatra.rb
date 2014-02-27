@@ -8,8 +8,9 @@ class FalseClass; def to_i; 0; end; end;
 configure do
   @@css_array = ['table.css']
   mime_type :json, 'application/json'
-  set :views, './views'
-  set :public_folder, './public'
+  set :root, File.join(File.dirname(__FILE__), '..')
+  set :views, settings.root+'/views'
+  set :public_folder, settings.root+'/public'
 end
 
 #module Helper
