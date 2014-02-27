@@ -69,7 +69,7 @@ get '/sites.json' do
   data_store = PStore.new("data.pstore")
   @result = data_store.transaction { data_store.fetch(array.first, nil) }
 
-  erb :sitesjson
+  @result.to_json
 end
 
 get '/history' do
