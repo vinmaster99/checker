@@ -1,5 +1,42 @@
 <p>Last checked on: <%= @timestamp %></p>
-<div class="datagrid">
+<div class="list">
+  <% @result.each_with_index do |value, i| %>
+  <% site, status, labels = value['domain'], value['status'], value['labels'] %>
+  <div class="site">
+    <div class="domain">
+      <h4>
+        <%= site %>
+        <div class="info">
+          <% if status == true %>
+            <img src="/ok.png">
+          <% else %>
+            <img src="/error.png">
+          <% end %>
+          <a href="<%= site %>" target="_blank">Link</a>
+        </div>
+      </h4>
+    </div>
+    <div class="subdomain">
+      <% labels.each do |label_hash| %>
+        <% label, l_status = label_hash['label'], label_hash['status'] %>
+        <h4>
+        <%= label %>
+          <div class="info">
+            <% if l_status == true %>
+              <img src="/ok.png">
+            <% else %>
+              <img src="/error.png">
+            <% end %>
+            <a href="<%= site+label %>" target="_blank">Link</a>
+          </div>
+        </h4>
+      <% end %>
+    </div>
+  </div>
+  <% end %>
+</div>
+
+<div class="datagrid" style="display: none;">
   <table>
     <thead>
       <tr>

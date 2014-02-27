@@ -1,0 +1,14 @@
+.site {
+  background-color: #DFFFDE;
+  padding: 2px;
+}
+
+.info {
+  display: inline;
+  float: right;
+}
+
+.subdomain {
+  padding-left: 2em;
+  display: none;
+}
