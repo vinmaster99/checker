@@ -1,9 +1,4 @@
-<head>
-  <link rel="stylesheet" type="text/css" href="table.css">
-</head>
-
-Last checked on: <%= @timestamp %>
-
+<p>Last checked on: <%= @timestamp %></p>
 <div class="datagrid">
   <table>
     <thead>
@@ -11,7 +6,7 @@ Last checked on: <%= @timestamp %>
         <th>Site url</th>
         <th>Status</th>
         <th>Link</th>
-      <tr>
+      </tr>
     </thead>
     <tbody>
       <% @result.each_with_index do |value, i| %>

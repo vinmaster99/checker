@@ -24,11 +24,13 @@ module Adaptive
     end
 
     def get_sites
+      # get list of WebApp objects from OneScreen internal gem
       sites_obj = OneScreen::Internal::WebApp.all( :limit => 300 )
       setup_url(sites_obj)
     end
 
     def setup_url(sites_obj)
+      # url from get_sites does not include protocal for valid request
       sites_obj.map do |obj|
         domain = obj.domain
         unless domain.include? "http"
@@ -46,28 +48,18 @@ module Adaptive
       # if the site is up, then return true, otherwise false
       
       begin
-        #response = Faraday.get(site)
-        #puts site
-        connection = Faraday.new
-        connection.options.timeout = @timeout
+        #response = Faraday.get(site)             # simple get request with Faraday
+        connection = Faraday.new                  # Setup advance Faraday obj
+        connection.options.timeout = @timeout     # set connection timeout
         connection.options.open_timeout = @timeout
 
-        response = connection.get site
-        #puts response.status
+        response = connection.get site            # make request
         #puts response.status
         is_site_up = response.status == 200
       rescue Exception => e
-        #puts e
-        is_site_up = false
+        is_site_up = false                        # any exception from request error on site
       end
-=begin
-      begin
-        response = Net::HTTP.get_response(URI.parse(site))
-        is_site_up = response.code == "200"
-      rescue SocketError, Exception
-        false
-      end
-=end
+
       is_site_up
     end
 
@@ -75,7 +67,6 @@ module Adaptive
       # Generate a report for all sites' status
       down = up = 0
       result.each do |site, status|
-        #puts "#{site}: #{status}"
         if status
           up += 1
         else
@@ -94,5 +85,5 @@ module Adaptive
 end
 
 Adaptive::Checker.environment = "development"
-Adaptive::Checker.timeout = 5
+Adaptive::Checker.timeout = 5 # set connection timeout
 Adaptive::Checker::Initializers.init_os_api

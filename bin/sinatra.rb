@@ -5,10 +5,21 @@ require 'json'
 class TrueClass; def to_i; 1; end; end;
 class FalseClass; def to_i; 0; end; end;
 
+configure do
+  @@css_array = ['table.css']
+end
+
+helpers do
+  def partial (template, locals = {})
+    erb(template, :layout => false, :locals => locals)
+  end
+end
+
 get '/' do
   "Hello, World"
 end
 
+# get '/sites/?' do
 ['/sites', '/sites/'].each do |path|
   get path do
     timestamp_store = PStore.new("timestamp.pstore")
@@ -18,7 +29,8 @@ end
     @result = data_store.transaction { data_store.fetch(array.last, nil) }
     @timestamp = Time.at(array.last)
 
-    erb :sites, :layout => :table_layout
+    #erb :sites, :layout => :table_layout
+    erb :sites
   end
 end
 
@@ -31,7 +43,8 @@ get '/sites/up' do
   @timestamp = Time.at(array.last)
   @options = { :status => "Up" }
 
-  erb :sites_sort, :layout => :table_layout
+  #erb :sites_sort, :layout => :table_layout
+  erb :sites_sort
 end
 
 get '/sites/down' do
@@ -43,7 +56,8 @@ get '/sites/down' do
   @timestamp = Time.at(array.last)
   @options = { :status => "Down" }
   
-  erb :sites_sort, :layout => :table_layout
+  #erb :sites_sort, :layout => :table_layout
+  erb :sites_sort
 end
 
 get '/sites.json' do

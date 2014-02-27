@@ -4,4 +4,5 @@
   <% @result = @result.sort { |a, b| a[1].to_i <=> b[1].to_i } %>
 <% end %>
 
-partial(:table_layout)
+<%= partial :head_layout %>
+<%= partial :table_layout %>
