@@ -2,7 +2,7 @@
 require "pstore"
 require_relative "../lib/checker"
 
-sites = Adaptive::Checker.get_sites[1..10]
+sites = Adaptive::Checker.get_sites
 
 result = Hash.new
 sites.each do |site|

@@ -7,8 +7,14 @@ class FalseClass; def to_i; 0; end; end;
 
 configure do
   @@css_array = ['table.css']
+  mime_type :json, 'application/json'
   set :views, './views'
+  set :public_folder, './public'
 end
+
+#module Helper
+#end
+#helpers Helper
 
 helpers do
   def partial (template, locals = {})
@@ -18,7 +24,7 @@ helpers do
 end
 
 get '/' do
-  "Hello, World"
+  "Hello, World\n#{settings.root}"
 end
 
 # get '/sites/?' do
@@ -63,6 +69,7 @@ get '/sites/down' do
 end
 
 get '/sites.json' do
+  content_type :json
   timestamp_store = PStore.new("timestamp.pstore")
   array = timestamp_store.transaction { timestamp_store.fetch(:times, Array.new) }
 
@@ -78,9 +85,6 @@ get '/history' do
   array.map {|epoch| Time.at(epoch)}.to_json
 end
 
-get %r{(table.css|sites\/table.css)$} do
-  erb :tablecss
-end
 =begin
 not_found do
   #status 404
