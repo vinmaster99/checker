@@ -16,31 +16,43 @@ module Adaptive
         end
       end
       
-      def get_sites( options = { :limit => 300, :include_widgets => true} )
-        # get list of WebApp objects with widgets from OneScreen internal gem
-        sites_obj = OneScreen::Internal::WebApp.all( options )
-        #setup_url(sites_obj)
+      def get_sites
         sites = Array.new
-        sites_obj.each do |webapp|
-          labels = webapp.widgets.map { |widget| { 'label' => widget['label'], 'status' => false } unless widget['label'] == 'global' || widget['label'] == "" || widget['label'] == "/" }.compact!
-          site = Hash.new
-          site['domain'] = self.setup_url(webapp.domain)
-          site['status'] = false
-          site['labels'] = labels
-          sites << site
+        # go page 1 to 10
+        (1..10).each do |page_num|
+          options = { :limit => 30, :include_widgets => true, :page => page_num }
+          # get list of WebApp objects with widgets from OneScreen internal gem
+          sites_obj = OneScreen::Internal::WebApp.all( options )
+
+          sites_obj.each do |webapp|
+            if webapp.widgets == []
+              labels = []
+            else
+              labels = webapp.widgets.map { |widget| { :label => widget['label'], :status => false } unless widget['label'] == 'global' || widget['label'] == "" || widget['label'] == "/" }.compact!
+            end
+
+            labels = [] if labels == nil
+
+            sites << {
+              :domain => self.setup_url(webapp.domain),
+              :status => false,
+              :labels => labels
+            }
+          end
         end
         sites
       end
 
       def check_sites(sites)
         sites.each do |site|
-          domain = site['domain']
+          domain = site[:domain]
           domain_is_up = self.is_site_up?(domain)
-          site['status'] = domain_is_up
+          site[:status] = domain_is_up
 
           if domain_is_up
-            site['labels'].each do |label|
-              label['status'] = self.is_site_up?(domain+label['label'])
+            site[:labels].each do |label|
+              label[:status] = self.is_site_up?(domain+label[:label])
+              site[:status] &= label[:status]   # if one of the subdomain is down, mark domain as down
             end
           else
             next
@@ -56,13 +68,17 @@ module Adaptive
         # if the site is up, then return true, otherwise false
         
         begin
-          #response = Faraday.get(site)             # simple get request with Faraday
-          connection = Faraday.new                  # Setup advance Faraday obj
-          connection.options.timeout = @timeout     # set connection timeout
-          connection.options.open_timeout = @timeout
+          # simple get request with Faraday
+          #response = Faraday.get(site)
 
-          response = connection.get site            # make request
-          #puts response.status
+          # setup Faraday obj with options
+          #connection = Faraday.new
+          #connection.options.timeout = @timeout     # set connection timeout
+          #connection.options.open_timeout = @timeout
+          #response = connection.get site            # make request
+          
+          # Use Faraday to get header
+          response = Faraday.head site
           is_site_up = response.status == 200       # if it returns 200, it is up
         rescue Exception => e
           is_site_up = false                        # any exception from request error on site

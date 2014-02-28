@@ -1,42 +1,6 @@
 <p>Last checked on: <%= @timestamp %></p>
-<div class="list">
-  <% @result.each_with_index do |value, i| %>
-  <% site, status, labels = value['domain'], value['status'], value['labels'] %>
-  <div class="site">
-    <div class="domain">
-      <h4>
-        <%= site %>
-        <div class="info">
-          <% if status == true %>
-            <img src="/ok.png">
-          <% else %>
-            <img src="/error.png">
-          <% end %>
-          <a href="<%= site %>" target="_blank">Link</a>
-        </div>
-      </h4>
-    </div>
-    <div class="subdomain">
-      <% labels.each do |label_hash| %>
-        <% label, l_status = label_hash['label'], label_hash['status'] %>
-        <h4>
-        <%= label %>
-          <div class="info">
-            <% if l_status == true %>
-              <img src="/ok.png">
-            <% else %>
-              <img src="/error.png">
-            <% end %>
-            <a href="<%= site+label %>" target="_blank">Link</a>
-          </div>
-        </h4>
-      <% end %>
-    </div>
-  </div>
-  <% end %>
-</div>
 
-<div class="datagrid" style="display: none;">
+<div class="datagrid" style="display: block;">
   <table>
     <thead>
       <tr>
@@ -47,9 +11,9 @@
     </thead>
     <tbody>
       <% @result.each_with_index do |value, i| %>
-        <tr class="domain <%= (i % 2 == 0)? "alt" : "" %>">
-          <% site, status, labels = value['domain'], value['status'], value['labels'] %>
-          <td><%= site %></td>
+        <tr class="domain alt">
+          <% site, status, labels = value[:domain], value[:status], value[:labels] %>
+          <td<%= " class=\"click\"" if labels.any? %>><%= site %></td>
           <td>
             <% if status == true %>
               <img src="/ok.png">
@@ -59,19 +23,30 @@
           </td>
           <td><a href="<%= site %>" target="_blank">Link</a></td>
         </tr>
-        <% labels.each do |label_hash| %>
-          <% label, l_status = label_hash['label'], label_hash['status'] %>
-          <tr class="subdomain" style="display: none; background-color: lightgray;">
-            <td style="padding-left: 5em;"><%= label %></td>
-            <td>
-              <% if l_status == true %>
-                <img src="/ok.png">
-              <% else %>
-                <img src="/error.png">
+        <% if labels.any? %>
+        <tr class="subdomain" style="display: none;">
+          <td colspan="3">
+            <table>
+              <thead><tr><th/><th/><th/></tr></thead>
+              <tbody>
+              <% labels.each do |label_hash| %>
+                <% label, l_status = label_hash[:label], label_hash[:status] %>
+                <tr>
+                  <td><%= label %></td>
+                  <td>
+                    <% if l_status == true %>
+                      <img src="/ok.png">
+                    <% else %>
+                      <img src="/error.png">
+                    <% end %>
+                  </td>
+                  <td><a href="<%= site+label %>" target="_blank">Link</a></td>
+                </tr>
               <% end %>
-            </td>
-            <td><a href="<%= site+label %>" target="_blank">Link</a></td>
-          </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
         <% end %>
       <% end %> 
     </tbody>

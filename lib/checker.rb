@@ -27,8 +27,8 @@ module Adaptive
     def generate_report(result)
       # Generate a report for all sites' status
       down = up = 0
-      result.each do |site, status|
-        if status
+      result.each do |site|
+        if site[:status]
           up += 1
         else
           down += 1
@@ -46,5 +46,5 @@ module Adaptive
 end
 
 Adaptive::Checker.environment = "development"
-Adaptive::Checker::Sites.timeout = 5 # set connection timeout
+Adaptive::Checker::Sites.timeout = 10 # set connection timeout
 Adaptive::Checker::Initializers.init_os_api

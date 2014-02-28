@@ -9,6 +9,8 @@
 }
 
 .subdomain {
-  padding-left: 2em;
-  display: none;
+}
+
+.click {
+  cursor: pointer;
 }

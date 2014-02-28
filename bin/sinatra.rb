@@ -2,6 +2,7 @@ require 'sinatra'
 require 'pstore'
 require 'json'
 
+# add to_i to compare boolean values
 class TrueClass; def to_i; 1; end; end;
 class FalseClass; def to_i; 0; end; end;
 
@@ -39,7 +40,6 @@ end
     @result = data_store.transaction { data_store.fetch(array.last, nil) }
     @timestamp = Time.at(array.last)
 
-    #erb :sites, :layout => :table_layout
     erb :sites
   end
 end
@@ -53,7 +53,6 @@ get '/sites/up' do
   @timestamp = Time.at(array.last)
   @options = { :status => "Up" }
 
-  #erb :sites_sort, :layout => :table_layout
   erb :sites_sort
 end
 
@@ -66,7 +65,6 @@ get '/sites/down' do
   @timestamp = Time.at(array.last)
   @options = { :status => "Down" }
   
-  #erb :sites_sort, :layout => :table_layout
   erb :sites_sort
 end
 
@@ -76,7 +74,7 @@ get '/sites.json' do
   array = timestamp_store.transaction { timestamp_store.fetch(:times, Array.new) }
 
   data_store = PStore.new("data.pstore")
-  @result = data_store.transaction { data_store.fetch(array.first, nil) }
+  @result = data_store.transaction { data_store.fetch(array.last, nil) }
 
   @result.to_json
 end
@@ -91,6 +89,6 @@ end
 not_found do
   #status 404
   #'not found'
-  halt 404, 'page not found'
+  halt 404, 'You reached the end of the Internet'
 end
 =end
