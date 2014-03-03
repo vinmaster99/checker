@@ -52,7 +52,7 @@ module Adaptive
           if domain_is_up
             site[:labels].each do |label|
               label[:status] = self.is_site_up?(domain+label[:label])
-              site[:status] &= label[:status]   # if one of the subdomain is down, mark domain as down
+              #site[:status] &= label[:status]   # if one of the subdomain is down, mark domain as down
             end
           else
             next

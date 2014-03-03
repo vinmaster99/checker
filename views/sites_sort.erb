@@ -1,7 +1,7 @@
 <% if @options[:status] && @options[:status] == "Up" %>
-  <% @result = @result.sort { |a, b| a['status'].to_i <=> b['status'].to_i }.reverse %>
+  <% @result = @result.sort { |a, b| a[:status].to_i <=> b[:status].to_i }.reverse %>
 <% elsif @options[:status] && @options[:status] == "Down" %>
-  <% @result = @result.sort { |a, b| a['status'].to_i <=> b['status'].to_i } %>
+  <% @result = @result.sort { |a, b| a[:status].to_i <=> b[:status].to_i } %>
 <% end %>
 
 <%= partial :head %>

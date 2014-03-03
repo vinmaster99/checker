@@ -15,7 +15,9 @@
           <% site, status, labels = value[:domain], value[:status], value[:labels] %>
           <td<%= " class=\"click\"" if labels.any? %>><%= site %></td>
           <td>
-            <% if status == true %>
+            <% if status == true && labels.any? { |l| l[:status] == false } %>
+              <img src="/warning.png">
+            <% elsif status == true %>
               <img src="/ok.png">
             <% else %>
               <img src="/error.png">
@@ -23,11 +25,10 @@
           </td>
           <td><a href="<%= site %>" target="_blank">Link</a></td>
         </tr>
-        <% if labels.any? %>
+        <% if labels.any? # make sure labels array not empty%>
         <tr class="subdomain" style="display: none;">
           <td colspan="3">
             <table>
-              <thead><tr><th/><th/><th/></tr></thead>
               <tbody>
               <% labels.each do |label_hash| %>
                 <% label, l_status = label_hash[:label], label_hash[:status] %>
