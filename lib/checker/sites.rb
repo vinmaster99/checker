@@ -7,13 +7,23 @@ module Adaptive
       extend self
       attr_accessor :timeout
 
-      def setup_url(domain)
+      def setup_domain(domain)
         # url from get_sites does not include protocal for valid request
         unless domain.include? "http"
           domain = "http://"+domain
         else
           domain
         end
+      end
+
+      def check_label(label_hash)
+        label = label_hash[:label]
+        if label.length > 0 && label[0] != '/'
+          label_hash[:label] = '/'+label
+        else
+          label_hash[:label] = label
+        end
+        label_hash
       end
       
       def get_sites
@@ -25,18 +35,25 @@ module Adaptive
           sites_obj = OneScreen::Internal::WebApp.all( options )
 
           sites_obj.each do |webapp|
+            next if Adaptive::Checker.IGNORE_DOMAINS.include? webapp.domain
+            next if webapp.is_deleted
             if webapp.widgets == []
               labels = []
             else
-              labels = webapp.widgets.map { |widget| { :label => widget['label'], :status => false } unless widget['label'] == 'global' || widget['label'] == "" || widget['label'] == "/" }.compact!
+              labels = webapp.widgets.map { |widget| { :label => widget['label'], :status => false } unless widget['label'] == 'global' || widget['label'] == "" || widget['label'] == "/" || widget['is_deleted'] == true }.compact!
             end
 
             labels = [] if labels == nil
+            labels.map! do |l|
+              l = self.check_label(l)
+            end
+            puts labels.select { |x| x[:label][0] != '/' }.inspect
 
             sites << {
-              :domain => self.setup_url(webapp.domain),
+              :domain => self.setup_domain(webapp.domain),
               :status => false,
-              :labels => labels
+              :labels => labels,
+              :cname => self.dig_check(webapp.domain)
             }
           end
         end
@@ -46,19 +63,32 @@ module Adaptive
       def check_sites(sites)
         sites.each do |site|
           domain = site[:domain]
-          domain_is_up = self.is_site_up?(domain)
+          #domain_is_up = self.is_site_up?(domain)
+          domain_is_up = self.get_status(domain)
           site[:status] = domain_is_up
 
-          if domain_is_up
+          if domain_is_up != 404
             site[:labels].each do |label|
-              label[:status] = self.is_site_up?(domain+label[:label])
-              #site[:status] &= label[:status]   # if one of the subdomain is down, mark domain as down
+              #label[:status] = self.is_site_up?(domain+label[:label])
+              label[:status] = self.get_status(domain+label[:label])
             end
           else
-            next
+            site[:labels].each { |label| label[:status] = 404 }
           end
         end
         sites
+      end
+
+      def get_status(site)
+        site_status = 404
+        begin
+          response = Faraday.head site
+          site_status = response.status
+        rescue Exception => e
+          # site_status is already 404
+          site_status = 404
+        end
+        site_status
       end
 
       def is_site_up?(site)
@@ -85,6 +115,11 @@ module Adaptive
         end
 
         is_site_up
+      end
+
+      def dig_check(domain)
+        check = %x(dig #{domain} | grep #{Adaptive::Checker.OS_CNAME})
+        is_hosted = check.empty? ? false : true
       end
 
     end

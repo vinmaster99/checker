@@ -2,23 +2,46 @@
 require "pstore"
 require_relative "../lib/checker"
 
-sites = Adaptive::Checker::Sites.get_sites
+module Adaptive
 
-result = Adaptive::Checker::Sites.check_sites( sites )
+  module Checker
 
-timestamp = Time.now.to_i
+    module Driver
+      extend self
+      
+      def main
+        sites = Adaptive::Checker::Sites.get_sites
 
-data_store = PStore.new("data.pstore")
-data_store.transaction do
-  data_store[timestamp] = result
+        result = Adaptive::Checker::Sites.check_sites( sites )
+
+        timestamp = Time.now.to_i
+
+        data_store = PStore.new("data.pstore")
+        data_store.transaction do
+          data_store[timestamp] = result
+        end
+
+        timestamp_store = PStore.new("timestamp.pstore")
+        array = timestamp_store.transaction { timestamp_store.fetch(:times, Array.new) }
+        array << timestamp
+        timestamp_store.transaction do
+          timestamp_store[:times] = array
+        end
+
+        Adaptive::Checker.generate_report(result)
+        #Adaptive::Checker.generate_json(result)
+      end
+
+      def env
+        puts 'run env'
+        puts ENV['HOME']
+        puts ENV['test']
+      end
+    end
+  end
 end
 
-timestamp_store = PStore.new("timestamp.pstore")
-array = timestamp_store.transaction { timestamp_store.fetch(:times, Array.new) }
-array << timestamp
-timestamp_store.transaction do
-  timestamp_store[:times] = array
+if __FILE__ == $0     # this script will only run if this file is not used as a lib
+  Adaptive::Checker::Driver.main
+  #Adaptive::Checker::Driver.env
 end
-
-Adaptive::Checker.generate_report(result)
-#Adaptive::Checker.generate_json(result)

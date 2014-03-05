@@ -12,7 +12,7 @@ module Adaptive
   module Checker
     extend self
 
-    attr_accessor :environment
+    attr_accessor :environment, :OS_CNAME, :IGNORE_DOMAINS
 
     def configuration
       config = YAML.load_file("config/onescreen.yml")
@@ -28,7 +28,7 @@ module Adaptive
       # Generate a report for all sites' status
       down = up = 0
       result.each do |site|
-        if site[:status]
+        if site[:status] != 404
           up += 1
         else
           down += 1
@@ -48,3 +48,5 @@ end
 Adaptive::Checker.environment = "development"
 Adaptive::Checker::Sites.timeout = 10 # set connection timeout
 Adaptive::Checker::Initializers.init_os_api
+Adaptive::Checker.OS_CNAME = "sites1.onescreen.net"
+Adaptive::Checker.IGNORE_DOMAINS = ['sites-status.net', 'testing.jwplayer.com', 'testing', 'layouttesting', 'global', 'sample.sites.com', 'testing.jekyll.com', 'testing_upload']

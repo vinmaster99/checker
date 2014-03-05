@@ -8,9 +8,36 @@
   float: right;
 }
 
-.subdomain {
-}
-
 .click {
   cursor: pointer;
+}
+
+.col1 {
+  width: 400px;
+}
+
+.col2, .col3, .col4 {
+  width: 150px;
+}
+
+.true {
+  color: black !important;
+}
+
+.false {
+  color: red !important;
+}
+
+.nav a {
+  display: block;
+  padding: 1em;
+  margin: 0.667em auto 1em;
+  font-size: 1em;
+  
+  line-height: 1em;
+  text-align: center;
+  
+  background: rgba(0,0,0,.1);
+  border-radius: 2em;
+  box-shadow: inset 0 0 1em rgba(0,0,0,.1), 0 2px 2px rgba(255,255,255,.1);
 }
